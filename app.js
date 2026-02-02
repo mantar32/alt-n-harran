@@ -256,27 +256,34 @@ const API = {
 
     async fetchAllData() {
         try {
-            // Primary Proxy: corsproxy.io (usually more reliable)
-            const proxyUrl = 'https://corsproxy.io/?';
+            // Priority 1: Use our own Vercel Proxy (Serverless Function)
+            // This runs on the same domain, so no CORS issues.
+            const currencyUrl = '/api/proxy?type=currency';
+            const goldUrl = '/api/proxy?type=gold';
 
-            // Add timestamp to prevent caching
+            console.log('🔄 Fetching data from Vercel Proxy...');
+
+            // Add timestamp to prevent browser caching of the local call
             const ts = new Date().getTime();
-            const currencyUrl = `${this.endpoints.currency}?_=${ts}`;
-            const goldUrl = `${this.endpoints.gold}?_=${ts}`;
 
             const [currencyRes, goldRes] = await Promise.all([
-                fetch(proxyUrl + encodeURIComponent(currencyUrl)),
-                fetch(proxyUrl + encodeURIComponent(goldUrl))
+                fetch(`${currencyUrl}&_=${ts}`),
+                fetch(`${goldUrl}&_=${ts}`)
             ]);
 
             if (!currencyRes.ok || !goldRes.ok) {
-                throw new Error('Primary proxy failed');
+                throw new Error('Vercel proxy failed');
             }
 
             const currencyData = await currencyRes.json();
             const goldData = await goldRes.json();
 
-            console.log('📊 Altınkaynak API Data (Primary):', { currency: currencyData, gold: goldData });
+            // Validate data structure (simple check)
+            if (!Array.isArray(currencyData) || !Array.isArray(goldData)) {
+                throw new Error('Invalid data format from proxy');
+            }
+
+            console.log('✅ Data fetched successfully via Proxy:', { currency: currencyData, gold: goldData });
 
             return {
                 success: true,
@@ -284,7 +291,8 @@ const API = {
                 timestamp: new Date().toISOString()
             };
         } catch (error) {
-            console.warn('Primary proxy failed, trying fallback...', error);
+            console.warn('⚠️ Vercel proxy failed, trying public fallbacks...', error);
+            // Fallback to public proxies if local api fails (e.g. running locally without `vercel dev`)
             return this.fetchWithFallback();
         }
     },
