@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Canlı döviz kurları ve altın fiyatları. USD, EUR, GBP ve gram altın, çeyrek altın, yarım altın, tam altın fiyatlarını anlık takip edin.">
+    <meta name="keywords"
+        content="döviz kurları, altın fiyatları, gram altın, çeyrek altın, USD TRY, EUR TRY, canlı kurlar">
+    <meta name="author" content="Altın Sarraf">
+    <meta property="og:title" content="Canlı Döviz Kurları ve Altın Fiyatları - Altın Sarraf">
+    <meta property="og:description"
+        content="Anlık döviz kurları ve altın fiyatları. Güncel piyasa verilerini takip edin.">
+    <meta property="og:type" content="website">
+    <title>Canlı Kurlar - Altın Sarraf | Döviz & Altın Fiyatları</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">
+                    <span class="logo-icon">◈</span>
+                    <span class="logo-text">Altın<span class="logo-accent">Harran</span></span>
+                </div>
+                <span class="market-badge" id="marketStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Piyasalar Açık</span>
+                </span>
+            </div>
+            <div class="header-right">
+                <div class="last-update" id="lastUpdate">
+                    <span class="update-label">Son Güncelleme:</span>
+                    <span class="update-time">--:--:--</span>
+                </div>
+                <div class="live-clock" id="liveClock">
+                    <span class="clock-icon">🕒</span>
+                    <span class="clock-time" id="realTimeClock">--:--:--</span>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+                <button class="admin-btn" id="adminBtn">
+                    <span>⚙️</span>
+                    <span class="admin-text">Admin</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Currency Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">💱</span>
+                    Döviz Kurları
+                </h2>
+                <div class="section-badge">Canlı</div>
+            </div>
+            <div class="cards-grid" id="currencyGrid">
+                <!-- Currency cards will be inserted by JS -->
+            </div>
+        </section>
+
+        <!-- Wholesale Gold Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">🥇</span>
+                    Toptan Altın Kurları
+                </h2>
+                <div class="section-badge wholesale">Toptan</div>
+            </div>
+            <div class="cards-grid" id="wholesaleGoldGrid">
+                <!-- Wholesale gold cards will be inserted by JS -->
+            </div>
+        </section>
+
+        <!-- Retail Gold Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="title-icon">✨</span>
+                    Perakende Altın Kurları
+                </h2>
+                <div class="section-badge retail">Perakende</div>
+            </div>
+            <div class="cards-grid" id="retailGoldGrid">
+                <!-- Retail gold cards will be inserted by JS -->
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <p>⚠️ Bu veriler yalnızca bilgilendirme amaçlıdır. Yatırım tavsiyesi değildir. İşlem yapmadan önce güncel
+                fiyatları doğrulayınız.</p>
+        </div>
+    </main>
+
+    <!-- Chart Modal -->
+    <div class="modal" id="chartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">24 Saatlik Grafik</h3>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <canvas id="detailChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Admin Paneli</h3>
+                <button class="modal-close" id="adminModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Login Form -->
+                <div class="admin-login" id="adminLogin">
+                    <div class="login-icon">🔐</div>
+                    <h4>Yönetici Girişi</h4>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Kullanıcı Adı</label>
+                            <input type="text" id="username" placeholder="admin" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Şifre</label>
+                            <input type="password" id="password" placeholder="••••••" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Giriş Yap</button>
+                        <p class="login-hint">Demo: admin / admin123</p>
+                    </form>
+                </div>
+
+                <!-- Admin Panel Content -->
+                <div class="admin-panel" id="adminPanel" style="display: none;">
+                    <div class="admin-section">
+                        <h4>📊 Spread Ayarları (Alış/Satış Marjı)</h4>
+                        <div class="spread-controls">
+                            <div class="form-group">
+                                <label for="buySpread">Alış Spreadi (%)</label>
+                                <input type="number" id="buySpread" step="0.1" value="0.3" min="0" max="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="sellSpread">Satış Spreadi (%)</label>
+                                <input type="number" id="sellSpread" step="0.1" value="0.3" min="0" max="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h4>⏱️ Güncelleme Aralığı</h4>
+                        <div class="form-group">
+                            <label for="refreshInterval">Yenileme Süresi (saniye)</label>
+                            <input type="range" id="refreshInterval" min="10" max="60" value="15">
+                            <span class="range-value" id="intervalValue">15s</span>
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h4>💱 Döviz Görünürlüğü</h4>
+                        <div class="toggle-list" id="currencyToggles">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-section">
+                        <h4>🥇 Altın Görünürlüğü</h4>
+                        <div class="toggle-list" id="goldToggles">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="admin-actions">
+                        <button class="btn-primary" id="saveSettings">💾 Kaydet</button>
+                        <button class="btn-secondary" id="logoutBtn">🚪 Çıkış</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader">
+            <div class="loader-spinner"></div>
+            <p>Veriler Yükleniyor...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
