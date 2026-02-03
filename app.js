@@ -739,35 +739,45 @@ const Converter = {
         const fromCode = DOM.convFrom.value;
         let rate = 0;
 
-        // Find rate in state
-        // Try direct lookup first
+        // 1. Try finding in Currencies
         if (state.rates.currencies[fromCode]) {
             rate = state.rates.currencies[fromCode].sell;
-        } else if (state.rates.gold[fromCode]) {
-            // Special handling for Gold (might need to map 'GA' to 'GRAM' etc depending on API keys in state)
-            // But state.rates keys are usually apiCodes.
-            // Let's check state structure. In fetchAllData:
-            // currencies: USD, EUR... 
-            // gold: GA (Gram), C (Quarter), etc. usually match API codes.
-            // Let's assume standard codes.
-            rate = state.rates.gold[fromCode]?.sell;
-            if (!rate) {
-                // Try mapping if needed (e.g. GA -> GRAM if applicable, but usually app uses apiCode)
-                // Check CONFIG.altin
-                const item = [...CONFIG.altin, ...CONFIG.sarrafiye].find(i => i.apiCode === fromCode);
-                if (item) {
-                    // Find where it lives in state
-                    // state.rates.altin OR state.rates.sarrafiye
-                    if (state.rates.altin[item.apiCode]) rate = state.rates.altin[item.apiCode].sell;
-                    else if (state.rates.sarrafiye[item.apiCode]) rate = state.rates.sarrafiye[item.apiCode].sell;
-                }
-            }
         }
 
-        if (!rate && fromCode) {
-            // Fallback search in all categories
-            const allRates = { ...state.rates.currencies, ...state.rates.altin, ...state.rates.sarrafiye };
-            if (allRates[fromCode]) rate = allRates[fromCode].sell;
+        // 2. Try finding in Gold/Sarrafiye
+        if (!rate) {
+            const allRates = {
+                ...state.rates.gold,
+                ...state.rates.altin,
+                ...state.rates.sarrafiye,
+                ...state.rates.gumus,
+                ...state.rates.eskiSarrafiye
+            };
+
+            // Try direct match
+            if (allRates[fromCode]) {
+                rate = allRates[fromCode].sell;
+            }
+            // Try fuzzy match (if API code is different from checking code)
+            // In our CONFIG, 'GA' might map to an API code.
+            // But the keys in allRates ARE the API codes (or whatever parseAllData used).
+            // If fromCode comes from CONFIG.altin[x].code, we need to find the item in CONFIG matching that code, get its apiCode, then look up.
+            else {
+                // Check CONFIG lists
+                const allItems = [
+                    ...CONFIG.altin,
+                    ...CONFIG.sarrafiye,
+                    ...CONFIG.gumus,
+                    ...CONFIG.kiloAltin,
+                    ...CONFIG.eskiSarrafiye
+                ];
+
+                const item = allItems.find(i => i.code === fromCode || i.apiCode === fromCode);
+                if (item) {
+                    const r = allRates[item.apiCode] || allRates[item.code];
+                    if (r) rate = r.sell;
+                }
+            }
         }
 
         if (rate) {
@@ -785,6 +795,9 @@ const Converter = {
 
 const EventListeners = {
     init() {
+        // Start Clock
+        setInterval(() => UI.updateHeader(), 1000);
+
         if (DOM.themeToggle) {
             DOM.themeToggle.addEventListener('click', () => UI.toggleTheme());
         }

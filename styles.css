@@ -1813,4 +1813,29 @@ body {
         gap: 8px;
         /* Reduce gap on mobile */
     }
+
+    .logo-text {
+        font-size: 1.2rem;
+    }
+
+    .market-badge {
+        display: none;
+        /* Hide market status on mobile to save space */
+    }
+
+    .last-update {
+        align-items: center;
+    }
+
+    .update-label {
+        display: none;
+        /* Hide label on mobile */
+    }
+
+    .update-time {
+        font-size: 0.9rem;
+        background: var(--bg-tertiary);
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
 }
