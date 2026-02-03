@@ -105,6 +105,8 @@ const state = {
         gumus: {}
     },
 
+    alarms: [], // Fiyat alarmları
+
     lastUpdate: null,
     isLoading: true,
     isCachedData: false,
@@ -153,7 +155,17 @@ const DOM = {
     saveSettings: document.getElementById('saveSettings'),
     logoutBtn: document.getElementById('logoutBtn'),
 
-    loadingOverlay: document.getElementById('loadingOverlay')
+    loadingOverlay: document.getElementById('loadingOverlay'),
+
+    // Alarm elements
+    alarmFab: document.getElementById('alarmFab'),
+    alarmModal: document.getElementById('alarmModal'),
+    alarmModalClose: document.getElementById('alarmModalClose'),
+    alarmItem: document.getElementById('alarmItem'),
+    alarmPrice: document.getElementById('alarmPrice'),
+    alarmType: document.getElementById('alarmType'),
+    addAlarmBtn: document.getElementById('addAlarmBtn'),
+    alarmList: document.getElementById('alarmList')
 };
 
 // ============================================
@@ -547,6 +559,11 @@ const DataManager = {
     updateUI() {
         UI.updateTicker();
         UI.renderAllTables();
+
+        // Check alarms
+        if (typeof AlarmManager !== 'undefined') {
+            AlarmManager.checkAlarms();
+        }
     }
 };
 
@@ -615,9 +632,12 @@ const EventListeners = {
         if (DOM.adminModalClose) {
             DOM.adminModalClose.addEventListener('click', () => UI.closeModal(DOM.adminModal));
         }
+        if (DOM.alarmModalClose) {
+            DOM.alarmModalClose.addEventListener('click', () => UI.closeModal(DOM.alarmModal));
+        }
 
         // Close modals on backdrop click
-        [DOM.chartModal, DOM.adminModal].forEach(modal => {
+        [DOM.chartModal, DOM.adminModal, DOM.alarmModal].forEach(modal => {
             if (modal) {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) UI.closeModal(modal);
@@ -630,6 +650,7 @@ const EventListeners = {
             if (e.key === 'Escape') {
                 UI.closeModal(DOM.chartModal);
                 UI.closeModal(DOM.adminModal);
+                UI.closeModal(DOM.alarmModal);
             }
         });
 
@@ -657,6 +678,33 @@ const EventListeners = {
         }
         if (DOM.logoutBtn) {
             DOM.logoutBtn.addEventListener('click', () => Admin.logout());
+        }
+
+        // Alarm FAB button
+        if (DOM.alarmFab) {
+            DOM.alarmFab.addEventListener('click', () => {
+                if (DOM.alarmModal) {
+                    DOM.alarmModal.classList.add('active');
+                    AlarmManager.requestNotificationPermission();
+                }
+            });
+        }
+
+        // Add alarm button
+        if (DOM.addAlarmBtn) {
+            DOM.addAlarmBtn.addEventListener('click', () => {
+                const itemCode = DOM.alarmItem?.value;
+                const targetPrice = DOM.alarmPrice?.value;
+                const alarmType = DOM.alarmType?.value;
+
+                if (!itemCode || !targetPrice || parseFloat(targetPrice) <= 0) {
+                    UI.showToast('Lütfen geçerli bir fiyat girin', 'error');
+                    return;
+                }
+
+                AlarmManager.addAlarm(itemCode, targetPrice, alarmType);
+                DOM.alarmPrice.value = '';
+            });
         }
     }
 };
@@ -702,11 +750,182 @@ async function init() {
     // Start auto refresh
     DataManager.startAutoRefresh();
 
+    // Load alarms
+    AlarmManager.loadAlarms();
+
     // Hide loading
     UI.hideLoading();
 
     console.log('✅ AltınSarraf Dashboard Ready!');
 }
+
+// ============================================
+// ALARM MANAGER
+// ============================================
+
+const AlarmManager = {
+    // Ürün isimleri
+    itemNames: {
+        'GA': 'Gram Altın',
+        'CH_T': 'Külçe (0.995)',
+        'HH_T': 'Has Altın',
+        'B': '22 Ayar Bilezik',
+        'C': 'Çeyrek Altın',
+        'Y': 'Yarım Altın',
+        'T': 'Teklik Altın',
+        'A': 'Ata Cumhuriyet',
+        'USD': 'USD',
+        'EUR': 'EUR'
+    },
+
+    loadAlarms() {
+        const saved = Utils.loadFromLocalStorage('priceAlarms');
+        if (saved && Array.isArray(saved)) {
+            state.alarms = saved;
+        }
+        this.renderAlarmList();
+        this.updateFabStatus();
+    },
+
+    saveAlarms() {
+        Utils.saveToLocalStorage('priceAlarms', state.alarms);
+        this.updateFabStatus();
+    },
+
+    addAlarm(itemCode, targetPrice, alarmType) {
+        const alarm = {
+            id: Date.now(),
+            itemCode,
+            itemName: this.itemNames[itemCode] || itemCode,
+            targetPrice: parseFloat(targetPrice),
+            type: alarmType, // 'below' or 'above'
+            triggered: false,
+            createdAt: new Date().toISOString()
+        };
+
+        state.alarms.push(alarm);
+        this.saveAlarms();
+        this.renderAlarmList();
+        UI.showToast(`Alarm eklendi: ${alarm.itemName}`, 'success');
+    },
+
+    removeAlarm(alarmId) {
+        state.alarms = state.alarms.filter(a => a.id !== alarmId);
+        this.saveAlarms();
+        this.renderAlarmList();
+    },
+
+    checkAlarms() {
+        if (!state.rates || state.alarms.length === 0) return;
+
+        state.alarms.forEach(alarm => {
+            if (alarm.triggered) return;
+
+            const rate = state.rates[alarm.itemCode];
+            if (!rate) return;
+
+            const currentPrice = rate.sell || rate.buy;
+            let triggered = false;
+
+            if (alarm.type === 'below' && currentPrice <= alarm.targetPrice) {
+                triggered = true;
+            } else if (alarm.type === 'above' && currentPrice >= alarm.targetPrice) {
+                triggered = true;
+            }
+
+            if (triggered) {
+                alarm.triggered = true;
+                this.saveAlarms();
+                this.showAlarmNotification(alarm, currentPrice);
+                this.renderAlarmList();
+            }
+        });
+    },
+
+    showAlarmNotification(alarm, currentPrice) {
+        // Browser notification
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('🔔 Fiyat Alarmı!', {
+                body: `${alarm.itemName}: ₺${Utils.formatPrice(currentPrice)} (Hedef: ₺${Utils.formatPrice(alarm.targetPrice)})`,
+                icon: '🔔'
+            });
+        }
+
+        // Visual notification
+        const notification = document.createElement('div');
+        notification.className = 'alarm-notification';
+        notification.innerHTML = `
+            <h4>🔔 ${alarm.itemName}</h4>
+            <p>${alarm.type === 'below' ? 'Fiyat düştü' : 'Fiyat yükseldi'}: ₺${Utils.formatPrice(currentPrice)}</p>
+        `;
+        document.body.appendChild(notification);
+
+        // Play sound
+        this.playAlarmSound();
+
+        // Remove after 5 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    },
+
+    playAlarmSound() {
+        try {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2teleR1Pn9XNb0IABZ/T3LuPU3c=');
+            audio.volume = 0.5;
+            audio.play().catch(() => { });
+        } catch (e) { }
+    },
+
+    renderAlarmList() {
+        if (!DOM.alarmList) return;
+
+        if (state.alarms.length === 0) {
+            DOM.alarmList.innerHTML = '<p class="no-alarms">Henüz alarm yok</p>';
+            return;
+        }
+
+        let html = '';
+        state.alarms.forEach(alarm => {
+            const typeClass = alarm.type === 'below' ? 'alarm-type-below' : 'alarm-type-above';
+            const typeText = alarm.type === 'below' ? '≤' : '≥';
+            const statusClass = alarm.triggered ? 'triggered' : '';
+
+            html += `
+                <div class="alarm-item ${statusClass}" data-alarm-id="${alarm.id}">
+                    <div class="alarm-info">
+                        <div class="alarm-name">${alarm.itemName}</div>
+                        <div class="alarm-details">
+                            <span class="${typeClass}">${typeText}</span> 
+                            <span class="alarm-target">₺${Utils.formatPrice(alarm.targetPrice)}</span>
+                            ${alarm.triggered ? '<span style="color: var(--success);"> ✓ Tetiklendi</span>' : ''}
+                        </div>
+                    </div>
+                    <button class="alarm-delete" onclick="AlarmManager.removeAlarm(${alarm.id})">🗑️</button>
+                </div>
+            `;
+        });
+
+        DOM.alarmList.innerHTML = html;
+    },
+
+    updateFabStatus() {
+        if (DOM.alarmFab) {
+            const activeAlarms = state.alarms.filter(a => !a.triggered).length;
+            if (activeAlarms > 0) {
+                DOM.alarmFab.classList.add('has-alarms');
+            } else {
+                DOM.alarmFab.classList.remove('has-alarms');
+            }
+        }
+    },
+
+    requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    }
+};
 
 // Start application when DOM is ready
 if (document.readyState === 'loading') {

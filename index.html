@@ -236,6 +236,68 @@
         </div>
     </div>
 
+    <!-- Floating Alarm Button -->
+    <button class="alarm-fab" id="alarmFab" title="Fiyat Alarmı">
+        🔔
+    </button>
+
+    <!-- Alarm Modal -->
+    <div class="modal" id="alarmModal">
+        <div class="modal-content alarm-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🔔 Fiyat Alarmı</h3>
+                <button class="modal-close" id="alarmModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <!-- Add New Alarm -->
+                <div class="alarm-form">
+                    <h4>Yeni Alarm Ekle</h4>
+                    <div class="form-group">
+                        <label for="alarmItem">Ürün Seçin</label>
+                        <select id="alarmItem">
+                            <optgroup label="Altın">
+                                <option value="GA">Gram Altın</option>
+                                <option value="CH_T">Külçe (0.995)</option>
+                                <option value="HH_T">Has Altın</option>
+                                <option value="B">22 Ayar Bilezik</option>
+                            </optgroup>
+                            <optgroup label="Sarrafiye">
+                                <option value="C">Çeyrek Altın</option>
+                                <option value="Y">Yarım Altın</option>
+                                <option value="T">Teklik Altın</option>
+                                <option value="A">Ata Cumhuriyet</option>
+                            </optgroup>
+                            <optgroup label="Döviz">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="alarmPrice">Hedef Fiyat (₺)</label>
+                        <input type="number" id="alarmPrice" placeholder="Örn: 7000" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="alarmType">Alarm Tipi</label>
+                        <select id="alarmType">
+                            <option value="below">Fiyat düşünce (≤)</option>
+                            <option value="above">Fiyat yükselince (≥)</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" id="addAlarmBtn">➕ Alarm Ekle</button>
+                </div>
+
+                <!-- Active Alarms List -->
+                <div class="alarm-list-section">
+                    <h4>Aktif Alarmlar</h4>
+                    <div class="alarm-list" id="alarmList">
+                        <p class="no-alarms">Henüz alarm yok</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 

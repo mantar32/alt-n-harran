@@ -1479,3 +1479,205 @@ body {
         font-size: 0.7rem;
     }
 }
+
+/* =========================================
+   ALARM SYSTEM STYLES
+   ========================================= */
+
+/* Floating Alarm Button */
+.alarm-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+    border: none;
+    box-shadow: 0 4px 12px rgba(212, 165, 32, 0.4);
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.alarm-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(212, 165, 32, 0.5);
+}
+
+.alarm-fab.has-alarms {
+    animation: pulse-alarm 2s infinite;
+}
+
+@keyframes pulse-alarm {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 12px rgba(212, 165, 32, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 4px 20px rgba(212, 165, 32, 0.8);
+    }
+}
+
+/* Alarm Modal */
+.alarm-modal {
+    max-width: 450px;
+}
+
+.alarm-form {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.alarm-form h4 {
+    margin: 0 0 16px;
+    color: var(--accent-gold);
+    font-size: 0.9rem;
+}
+
+.alarm-form select,
+.alarm-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.alarm-form select:focus,
+.alarm-form input:focus {
+    border-color: var(--accent-gold);
+    outline: none;
+}
+
+.alarm-form .btn-primary {
+    width: 100%;
+    margin-top: 12px;
+}
+
+/* Alarm List */
+.alarm-list-section h4 {
+    margin: 0 0 12px;
+    color: #888;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.alarm-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.no-alarms {
+    color: #666;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.85rem;
+}
+
+.alarm-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid #333;
+}
+
+.alarm-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.alarm-info {
+    flex: 1;
+}
+
+.alarm-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.85rem;
+}
+
+.alarm-details {
+    color: #888;
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+.alarm-target {
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.alarm-type-below {
+    color: var(--danger);
+}
+
+.alarm-type-above {
+    color: var(--success);
+}
+
+.alarm-delete {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 6px;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.alarm-delete:hover {
+    color: var(--danger);
+}
+
+/* Alarm Notification */
+.alarm-notification {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+    color: #000;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+    max-width: 320px;
+}
+
+.alarm-notification h4 {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+}
+
+.alarm-notification p {
+    margin: 0;
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
