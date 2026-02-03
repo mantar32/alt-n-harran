@@ -581,19 +581,6 @@ const DataManager = {
             // Parse all data into rates object
             const newRates = API.parseAllData(result.data.currency, result.data.gold);
 
-            // Calculate change percentage based on previous rates
-            Object.keys(newRates).forEach(code => {
-                const current = newRates[code];
-                const previous = state.previousRates[code];
-
-                if (previous && previous.buy > 0) {
-                    // Calculate percentage change based on buy price
-                    current.change = ((current.buy - previous.buy) / previous.buy) * 100;
-                } else {
-                    current.change = 0;
-                }
-            });
-
             state.rates = newRates;
             state.lastUpdate = result.timestamp;
             state.isCachedData = false;
