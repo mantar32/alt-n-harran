@@ -146,6 +146,18 @@ const DOM = {
     adminPanel: document.getElementById('adminPanel'),
     loginForm: document.getElementById('loginForm'),
 
+    // New Modals
+    converterModal: document.getElementById('converterModal'),
+    converterModalClose: document.getElementById('converterModalClose'),
+    contactModal: document.getElementById('contactModal'),
+    contactModalClose: document.getElementById('contactModalClose'),
+
+    // Converter Elements
+    convAmount: document.getElementById('convAmount'),
+    convFrom: document.getElementById('convFrom'),
+    convTo: document.getElementById('convTo'),
+    convResult: document.getElementById('convResult'),
+
     buySpread: document.getElementById('buySpread'),
     sellSpread: document.getElementById('sellSpread'),
     refreshInterval: document.getElementById('refreshInterval'),
@@ -620,6 +632,107 @@ const Admin = {
 };
 
 // ============================================
+// CONVERTER LOGIC
+// ============================================
+
+const Converter = {
+    initialized: false,
+
+    init() {
+        if (this.initialized) return;
+
+        // Populate options
+        const select = DOM.convFrom;
+        if (!select) return;
+
+        select.innerHTML = '';
+
+        // Add Currencies
+        const currencies = [
+            { code: 'USD', name: 'USD - Dolar' },
+            { code: 'EUR', name: 'EUR - Euro' },
+            { code: 'GBP', name: 'GBP - Sterlin' },
+            { code: 'CHF', name: 'CHF - İsviçre Frangı' }
+        ];
+
+        const optGroupCurrency = document.createElement('optgroup');
+        optGroupCurrency.label = 'Döviz';
+        currencies.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.code;
+            opt.textContent = c.name;
+            optGroupCurrency.appendChild(opt);
+        });
+        select.appendChild(optGroupCurrency);
+
+        // Add Gold
+        const gold = [
+            { code: 'GA', name: 'Gram Altın' },
+            { code: 'C', name: 'Çeyrek Altın' },
+            { code: 'Y', name: 'Yarım Altın' },
+            { code: 'A', name: 'Tam Altın' }
+        ];
+
+        const optGroupGold = document.createElement('optgroup');
+        optGroupGold.label = 'Altın';
+        gold.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.code;
+            opt.textContent = g.name;
+            optGroupGold.appendChild(opt);
+        });
+        select.appendChild(optGroupGold);
+
+        this.initialized = true;
+        this.calculate();
+    },
+
+    calculate() {
+        const amount = parseFloat(DOM.convAmount.value) || 0;
+        const fromCode = DOM.convFrom.value;
+        let rate = 0;
+
+        // Find rate in state
+        // Try direct lookup first
+        if (state.rates.currencies[fromCode]) {
+            rate = state.rates.currencies[fromCode].sell;
+        } else if (state.rates.gold[fromCode]) {
+            // Special handling for Gold (might need to map 'GA' to 'GRAM' etc depending on API keys in state)
+            // But state.rates keys are usually apiCodes.
+            // Let's check state structure. In fetchAllData:
+            // currencies: USD, EUR... 
+            // gold: GA (Gram), C (Quarter), etc. usually match API codes.
+            // Let's assume standard codes.
+            rate = state.rates.gold[fromCode]?.sell;
+            if (!rate) {
+                // Try mapping if needed (e.g. GA -> GRAM if applicable, but usually app uses apiCode)
+                // Check CONFIG.altin
+                const item = [...CONFIG.altin, ...CONFIG.sarrafiye].find(i => i.apiCode === fromCode);
+                if (item) {
+                    // Find where it lives in state
+                    // state.rates.altin OR state.rates.sarrafiye
+                    if (state.rates.altin[item.apiCode]) rate = state.rates.altin[item.apiCode].sell;
+                    else if (state.rates.sarrafiye[item.apiCode]) rate = state.rates.sarrafiye[item.apiCode].sell;
+                }
+            }
+        }
+
+        if (!rate && fromCode) {
+            // Fallback search in all categories
+            const allRates = { ...state.rates.currencies, ...state.rates.altin, ...state.rates.sarrafiye };
+            if (allRates[fromCode]) rate = allRates[fromCode].sell;
+        }
+
+        if (rate) {
+            const result = amount * rate;
+            DOM.convResult.innerText = `${Utils.formatPrice(result)} ₺`;
+        } else {
+            DOM.convResult.innerText = '0.00 ₺';
+        }
+    }
+};
+
+// ============================================
 // EVENT LISTENERS
 // ============================================
 
@@ -665,12 +778,66 @@ const EventListeners = {
         }
 
         // Close sidebar on menu item click (mobile UX)
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
-            item.addEventListener('click', () => toggleSidebar(false));
+        // document.querySelectorAll('.sidebar-nav .nav-item').forEach... (Removed to use specific IDs)
+
+        // Sidebar Navigation
+        document.getElementById('nav-home')?.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            toggleSidebar(false);
         });
 
+        document.getElementById('nav-rates')?.addEventListener('click', () => {
+            document.querySelector('.tables-container')?.scrollIntoView({ behavior: 'smooth' });
+            toggleSidebar(false);
+        });
+
+        document.getElementById('nav-converter')?.addEventListener('click', () => {
+            Converter.init(); // Initialize options if needed
+            if (DOM.converterModal) {
+                DOM.converterModal.classList.add('active');
+                DOM.converterModal.style.display = 'flex'; // Ensure flex for centering
+            }
+            toggleSidebar(false);
+        });
+
+        document.getElementById('nav-alarms')?.addEventListener('click', () => {
+            if (DOM.alarmModal) {
+                DOM.alarmModal.classList.add('active');
+                DOM.alarmModal.style.display = 'flex';
+            }
+            toggleSidebar(false);
+        });
+
+        document.getElementById('nav-settings')?.addEventListener('click', () => {
+            if (DOM.adminModal) {
+                DOM.adminModal.classList.add('active');
+                DOM.adminModal.style.display = 'flex';
+            }
+            toggleSidebar(false);
+        });
+
+        document.getElementById('nav-contact')?.addEventListener('click', () => {
+            if (DOM.contactModal) {
+                DOM.contactModal.classList.add('active');
+                DOM.contactModal.style.display = 'flex';
+            }
+            toggleSidebar(false);
+        });
+
+        // New Modal Close Buttons
+        if (DOM.converterModalClose) {
+            DOM.converterModalClose.addEventListener('click', () => UI.closeModal(DOM.converterModal));
+        }
+        if (DOM.contactModalClose) {
+            DOM.contactModalClose.addEventListener('click', () => UI.closeModal(DOM.contactModal));
+        }
+
+        // Converter Inputs
+        DOM.convAmount?.addEventListener('input', Converter.calculate);
+        DOM.convFrom?.addEventListener('change', Converter.calculate);
+
         // Close modals on backdrop click
-        [DOM.chartModal, DOM.adminModal, DOM.alarmModal].forEach(modal => {
+        [DOM.chartModal, DOM.adminModal, DOM.alarmModal, DOM.converterModal, DOM.contactModal].forEach(modal => {
             if (modal) {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) UI.closeModal(modal);

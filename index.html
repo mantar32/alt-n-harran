@@ -36,12 +36,12 @@
             <button class="sidebar-close" id="sidebarClose">✕</button>
         </div>
         <nav class="sidebar-nav">
-            <a href="#" class="nav-item active"><i class="icon">🏠</i> Anasayfa</a>
-            <a href="#" class="nav-item"><i class="icon">💰</i> Canlı Kurlar</a>
-            <a href="#" class="nav-item"><i class="icon">🔄</i> Çevirici</a>
-            <a href="#" class="nav-item"><i class="icon">🔔</i> Alarmlar</a>
-            <a href="#" class="nav-item"><i class="icon">⚙️</i> Ayarlar</a>
-            <a href="#" class="nav-item"><i class="icon">📞</i> İletişim</a>
+            <a href="#" class="nav-item active" id="nav-home"><i class="icon">🏠</i> Anasayfa</a>
+            <a href="#" class="nav-item" id="nav-rates"><i class="icon">💰</i> Canlı Kurlar</a>
+            <a href="#" class="nav-item" id="nav-converter"><i class="icon">🔄</i> Çevirici</a>
+            <a href="#" class="nav-item" id="nav-alarms"><i class="icon">🔔</i> Alarmlar</a>
+            <a href="#" class="nav-item" id="nav-settings"><i class="icon">⚙️</i> Ayarlar</a>
+            <a href="#" class="nav-item" id="nav-contact"><i class="icon">📞</i> İletişim</a>
         </nav>
     </aside>
 
@@ -200,6 +200,78 @@
             </div>
         </div>
     </main>
+
+    <!-- Currency Converter Modal -->
+    <div class="modal" id="converterModal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">💱 Döviz Çevirici</h3>
+                <button class="modal-close" id="converterModalClose">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="converter-box" style="padding:10px;">
+                    <div class="form-group">
+                        <label>Miktar</label>
+                        <input type="number" id="convAmount" value="1" style="font-size:1.2rem; padding:12px;">
+                    </div>
+
+                    <div class="form-group" style="display:flex; gap:10px; align-items:center;">
+                        <div style="flex:1;">
+                            <label>Şundan:</label>
+                            <select id="convFrom" style="padding:12px;"></select>
+                        </div>
+                        <div style="font-size:1.5rem;">➡️</div>
+                        <div style="flex:1;">
+                            <label>Şuna:</label>
+                            <select id="convTo" style="padding:12px;">
+                                <option value="TRY">TRY - Türk Lirası</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="result-display"
+                        style="text-align:center; margin-top:20px; padding:20px; background:var(--bg-tertiary); border-radius:12px;">
+                        <span style="font-size:0.9rem; color:var(--text-secondary);">SONUÇ</span>
+                        <div id="convResult"
+                            style="font-size:2rem; font-weight:bold; color:var(--text-primary); margin-top:5px;">0.00 ₺
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📞 İletişim</h3>
+                <button class="modal-close" id="contactModalClose">✕</button>
+            </div>
+            <div class="modal-body" style="text-align:center; padding:20px;">
+                <div class="contact-item" style="margin-bottom:20px;">
+                    <i class="fa-solid fa-phone"
+                        style="font-size:2rem; margin-bottom:10px; color:var(--accent-gold);"></i>
+                    <h3>Telefon</h3>
+                    <p><a href="tel:+902121234567" style="color:var(--text-primary); text-decoration:none;">+90 (212)
+                            123 45 67</a></p>
+                </div>
+                <div class="contact-item" style="margin-bottom:20px;">
+                    <i class="fa-solid fa-location-dot"
+                        style="font-size:2rem; margin-bottom:10px; color:var(--accent-gold);"></i>
+                    <h3>Adres</h3>
+                    <p>Kapalıçarşı, Beyazıt/İstanbul</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-envelope"
+                        style="font-size:2rem; margin-bottom:10px; color:var(--accent-gold);"></i>
+                    <h3>E-posta</h3>
+                    <p><a href="mailto:info@altinsarraf.com"
+                            style="color:var(--text-primary); text-decoration:none;">info@altinsarraf.com</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Chart Modal -->
     <div class="modal" id="chartModal">
