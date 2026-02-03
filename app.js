@@ -636,6 +636,39 @@ const EventListeners = {
             DOM.alarmModalClose.addEventListener('click', () => UI.closeModal(DOM.alarmModal));
         }
 
+        // Sidebar Controls
+        const toggleSidebar = (show) => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            if (show) {
+                sidebar?.classList.add('active');
+                overlay?.classList.add('active');
+            } else {
+                sidebar?.classList.remove('active');
+                overlay?.classList.remove('active');
+            }
+        };
+
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', () => toggleSidebar(true));
+        }
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', () => toggleSidebar(false));
+        }
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+        }
+
+        // Close sidebar on menu item click (mobile UX)
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => toggleSidebar(false));
+        });
+
         // Close modals on backdrop click
         [DOM.chartModal, DOM.adminModal, DOM.alarmModal].forEach(modal => {
             if (modal) {

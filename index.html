@@ -14,6 +14,7 @@
         content="Anlık döviz kurları ve altın fiyatları. Güncel piyasa verilerini takip edin.">
     <meta property="og:type" content="website">
     <title>Canlı Kurlar - Altın Sarraf | Döviz & Altın Fiyatları</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -23,6 +24,27 @@
 </head>
 
 <body>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Drawer -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <span class="logo-text">Altın<span class="logo-accent">Sarraf</span></span>
+            </div>
+            <button class="sidebar-close" id="sidebarClose">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active"><i class="icon">🏠</i> Anasayfa</a>
+            <a href="#" class="nav-item"><i class="icon">💰</i> Canlı Kurlar</a>
+            <a href="#" class="nav-item"><i class="icon">🔄</i> Çevirici</a>
+            <a href="#" class="nav-item"><i class="icon">🔔</i> Alarmlar</a>
+            <a href="#" class="nav-item"><i class="icon">⚙️</i> Ayarlar</a>
+            <a href="#" class="nav-item"><i class="icon">📞</i> İletişim</a>
+        </nav>
+    </aside>
+
     <!-- Ticker Bar - Kayan Yazı -->
     <div class="ticker-bar" id="tickerBar">
         <div class="ticker-content" id="tickerContent">
@@ -46,6 +68,44 @@
     </div>
 
     <!-- Main Content -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <!-- Hamburger Button -->
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+
+                <a href="/" class="logo">
+                    <span class="logo-icon">꩜</span>
+                    Altın<span class="logo-accent">Sarraf</span>
+                </a>
+                <div class="market-badge" id="marketStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Piyasa Açık</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="last-update">
+                    <span class="update-label">Son Güncelleme</span>
+                    <span class="update-time" id="lastUpdate">--:--:--</span>
+                </div>
+
+                <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+
+                <button class="admin-btn" onclick="document.getElementById('adminModal').classList.add('active')">
+                    ⚙️
+                </button>
+            </div>
+        </div>
+    </header>
+
     <main class="main-content table-layout">
         <div class="tables-container">
             <!-- Left Column -->
