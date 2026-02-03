@@ -120,10 +120,10 @@ const state = {
 const DOM = {
     // Ticker elements
     tickerContent: document.getElementById('tickerContent'),
+    tickerEur: document.getElementById('ticker-eur'),
     tickerKulce: document.getElementById('ticker-kulce'),
     ticker22Ayar: document.getElementById('ticker-22ayar'),
     tickerXauusd: document.getElementById('ticker-xauusd'),
-    tickerXagusd: document.getElementById('ticker-xagusd'),
 
     // Table bodies
     altinTableBody: document.getElementById('altinTableBody'),
@@ -329,6 +329,16 @@ const UI = {
     updateTicker() {
         const rates = state.rates;
 
+        // EUR
+        if (DOM.tickerEur && rates['EUR']) {
+            const buy = Utils.formatPrice(rates['EUR'].buy);
+            const sell = Utils.formatPrice(rates['EUR'].sell);
+            const change = rates['EUR'].change || 0;
+            const dir = change >= 0 ? 'up' : 'down';
+            DOM.tickerEur.innerHTML = `${buy} / ${sell} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
+            DOM.tickerEur.className = `ticker-value ${dir}`;
+        }
+
         // Külçe (0.995)
         if (DOM.tickerKulce && rates['K0995']) {
             const buy = Utils.formatPrice(rates['K0995'].buy);
@@ -352,20 +362,10 @@ const UI = {
         // XAUUSD
         if (DOM.tickerXauusd && rates['XAUUSD']) {
             const buy = Utils.formatPrice(rates['XAUUSD'].buy);
-            const sell = Utils.formatPrice(rates['XAUUSD'].sell);
             const change = rates['XAUUSD'].change || 0;
             const dir = change >= 0 ? 'up' : 'down';
             DOM.tickerXauusd.innerHTML = `${buy} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.tickerXauusd.className = `ticker-value ${dir}`;
-        }
-
-        // XAG/USD (Silver)
-        if (DOM.tickerXagusd && rates['XAGUSD']) {
-            const buy = Utils.formatPrice(rates['XAGUSD'].buy);
-            const change = rates['XAGUSD'].change || 0;
-            const dir = change >= 0 ? 'up' : 'down';
-            DOM.tickerXagusd.innerHTML = `${buy} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
-            DOM.tickerXagusd.className = `ticker-value ${dir}`;
         }
     },
 
