@@ -143,7 +143,13 @@ const DOM = {
     // Header Elements
     marketStatus: document.getElementById('marketStatus'),
     lastUpdate: document.getElementById('lastUpdate'),
-    liveClock: document.getElementById('liveClock'),
+    // liveClock: document.getElementById('liveClock'), // Removed
+
+    // Analog Clock Hands
+    clockHour: document.getElementById('clockHour'),
+    clockMinute: document.getElementById('clockMinute'),
+    clockSecond: document.getElementById('clockSecond'),
+
     themeToggle: document.getElementById('themeToggle'),
 
     adminModal: document.getElementById('adminModal'),
@@ -341,11 +347,19 @@ const API = {
 const UI = {
     // Update header info (Time & Market Status)
     updateHeader() {
-        // Live Clock
-        if (DOM.liveClock) {
-            const now = new Date();
-            DOM.liveClock.textContent = now.toLocaleTimeString('tr-TR');
-        }
+        // Analog Clock
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const minutes = now.getMinutes();
+        const hours = now.getHours();
+
+        const secondDeg = ((seconds / 60) * 360);
+        const minuteDeg = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+        const hourDeg = ((hours / 12) * 360) + ((minutes / 60) * 30);
+
+        if (DOM.clockSecond) DOM.clockSecond.style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+        if (DOM.clockMinute) DOM.clockMinute.style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+        if (DOM.clockHour) DOM.clockHour.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
 
         if (DOM.marketStatus) {
             // Simple logic: Market open 09:00 - 18:00 weekdays

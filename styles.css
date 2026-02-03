@@ -1839,3 +1839,78 @@ body {
         border-radius: 6px;
     }
 }
+
+/* Analog Clock */
+.analog-clock {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--text-primary);
+    border-radius: 50%;
+    position: relative;
+    margin-right: 15px;
+    background: var(--bg-secondary);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.clock-center {
+    width: 4px;
+    height: 4px;
+    background: var(--accent-gold);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    background: var(--text-primary);
+    border-radius: 4px;
+    transform: translateX(-50%);
+    transition: transform 0.1s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.hour-hand {
+    width: 2px;
+    height: 10px;
+    background: var(--text-primary);
+    z-index: 5;
+}
+
+.minute-hand {
+    width: 2px;
+    height: 14px;
+    background: var(--text-secondary);
+    z-index: 6;
+}
+
+.second-hand {
+    width: 1px;
+    height: 17px;
+    background: var(--danger);
+    z-index: 7;
+    transition: transform 0.1s linear;
+    /* Smooth second hand */
+}
+
+@media (max-width: 768px) {
+    .analog-clock {
+        width: 36px;
+        height: 36px;
+        margin-right: 10px;
+    }
+
+    .last-update {
+        display: none;
+        /* Hide last update on mobile to fit clock and logo */
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+}
