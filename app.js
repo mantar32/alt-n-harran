@@ -652,13 +652,25 @@ async function init() {
         state.settings = { ...state.settings, ...savedSettings };
     }
 
+    // Load cached data first (instant display)
+    const cachedData = Utils.loadFromLocalStorage('cachedRates');
+    if (cachedData && cachedData.rates) {
+        state.rates = cachedData.rates;
+        state.lastUpdate = cachedData.timestamp;
+        state.isCachedData = true;
+        console.log('📦 Loaded cached data from:', cachedData.timestamp);
+
+        // Update UI immediately with cached data
+        DataManager.updateUI();
+    }
+
     // Setup event listeners
     EventListeners.init();
 
-    // Fetch initial data
+    // Fetch fresh data from API
     await DataManager.fetchAllData();
 
-    // Update UI
+    // Update UI with fresh data
     DataManager.updateUI();
 
     // Start auto refresh
