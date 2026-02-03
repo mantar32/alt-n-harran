@@ -475,13 +475,29 @@ const DataManager = {
             }
 
             // Parse all data into rates object
-            state.rates = API.parseAllData(result.data.currency, result.data.gold);
+            const newRates = API.parseAllData(result.data.currency, result.data.gold);
+
+            // Calculate change percentage based on previous rates
+            Object.keys(newRates).forEach(code => {
+                const current = newRates[code];
+                const previous = state.previousRates[code];
+
+                if (previous && previous.buy > 0) {
+                    // Calculate percentage change based on buy price
+                    current.change = ((current.buy - previous.buy) / previous.buy) * 100;
+                } else {
+                    current.change = 0;
+                }
+            });
+
+            state.rates = newRates;
             state.lastUpdate = result.timestamp;
             state.isCachedData = false;
 
-            // Save to cache
+            // Save to cache (including previous rates for change calculation)
             Utils.saveToLocalStorage('cachedRates', {
                 rates: state.rates,
+                previousRates: state.previousRates,
                 timestamp: result.timestamp
             });
 
@@ -656,6 +672,7 @@ async function init() {
     const cachedData = Utils.loadFromLocalStorage('cachedRates');
     if (cachedData && cachedData.rates) {
         state.rates = cachedData.rates;
+        state.previousRates = cachedData.previousRates || {};
         state.lastUpdate = cachedData.timestamp;
         state.isCachedData = true;
         console.log('📦 Loaded cached data from:', cachedData.timestamp);
