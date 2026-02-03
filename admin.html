@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli - Altın Sarraf</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="home-link">⬅ Anasayfa</a>
+
+    <div class="admin-container">
+        <h2 style="text-align: center; margin-bottom: 30px; color: var(--text-primary);">Admin Paneli</h2>
+
+        <!-- Login Form -->
+        <div class="admin-login" id="adminLogin">
+            <div class="login-icon">🔐</div>
+            <h4>Yönetici Girişi</h4>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input type="text" id="username" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" placeholder="••••••" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Giriş Yap</button>
+                <p class="login-hint" style="text-align: center; margin-top: 10px; color: var(--text-tertiary);">Demo:
+                    admin / admin123</p>
+            </form>
+        </div>
+
+        <!-- Admin Panel Content -->
+        <div class="admin-panel" id="adminPanel" style="display: none;">
+            <div class="admin-section">
+                <h4>📊 Spread Ayarları (Alış/Satış Marjı)</h4>
+                <div class="spread-controls">
+                    <div class="form-group">
+                        <label for="buySpread">Alış Spreadi (%)</label>
+                        <input type="number" id="buySpread" step="0.1" value="0.3" min="0" max="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="sellSpread">Satış Spreadi (%)</label>
+                        <input type="number" id="sellSpread" step="0.1" value="0.3" min="0" max="5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h4>⏱️ Güncelleme Aralığı</h4>
+                <div class="form-group">
+                    <label for="refreshInterval">Yenileme Süresi (saniye)</label>
+                    <input type="range" id="refreshInterval" min="10" max="60" value="15"
+                        oninput="document.getElementById('intervalValue').textContent = this.value + 's'">
+                    <span class="range-value" id="intervalValue"
+                        style="display: block; text-align: center; margin-top: 5px;">15s</span>
+                </div>
+            </div>
+
+            <!-- 
+            <div class="admin-section">
+                <h4>💱 Döviz Görünürlüğü</h4>
+                <div class="toggle-list" id="currencyToggles">
+                   
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h4>🥇 Altın Görünürlüğü</h4>
+                <div class="toggle-list" id="goldToggles">
+                    
+                </div>
+            </div> 
+            -->
+
+            <div class="admin-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn-primary" id="saveSettings" style="flex: 1;">💾 Kaydet</button>
+                <button class="btn-secondary" id="logoutBtn" style="flex: 1;">🚪 Çıkış</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

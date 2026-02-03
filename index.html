@@ -40,7 +40,7 @@
             <a href="#" class="nav-item" id="nav-rates"><i class="icon">💰</i> Canlı Kurlar</a>
             <a href="#" class="nav-item" id="nav-converter"><i class="icon">🔄</i> Çevirici</a>
             <a href="#" class="nav-item" id="nav-alarms"><i class="icon">🔔</i> Alarmlar</a>
-            <a href="#" class="nav-item" id="nav-settings"><i class="icon">⚙️</i> Ayarlar</a>
+            <a href="admin.html" class="nav-item" id="nav-settings"><i class="icon">⚙️</i> Ayarlar</a>
             <a href="#" class="nav-item" id="nav-contact"><i class="icon">📞</i> İletişim</a>
         </nav>
     </aside>
@@ -117,9 +117,7 @@
                     <span class="theme-icon moon">🌙</span>
                 </button>
 
-                <button class="admin-btn" onclick="document.getElementById('adminModal').classList.add('active')">
-                    ⚙️
-                </button>
+                <!-- Admin Button Removed -->
             </div>
         </div>
     </header>
@@ -304,79 +302,7 @@
         </div>
     </div>
 
-    <!-- Admin Panel Modal -->
-    <div class="modal" id="adminModal">
-        <div class="modal-content admin-modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Admin Paneli</h3>
-                <button class="modal-close" id="adminModalClose">✕</button>
-            </div>
-            <div class="modal-body">
-                <!-- Login Form -->
-                <div class="admin-login" id="adminLogin">
-                    <div class="login-icon">🔐</div>
-                    <h4>Yönetici Girişi</h4>
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label for="username">Kullanıcı Adı</label>
-                            <input type="text" id="username" placeholder="admin" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Şifre</label>
-                            <input type="password" id="password" placeholder="••••••" required>
-                        </div>
-                        <button type="submit" class="btn-primary">Giriş Yap</button>
-                        <p class="login-hint">Demo: admin / admin123</p>
-                    </form>
-                </div>
-
-                <!-- Admin Panel Content -->
-                <div class="admin-panel" id="adminPanel" style="display: none;">
-                    <div class="admin-section">
-                        <h4>📊 Spread Ayarları (Alış/Satış Marjı)</h4>
-                        <div class="spread-controls">
-                            <div class="form-group">
-                                <label for="buySpread">Alış Spreadi (%)</label>
-                                <input type="number" id="buySpread" step="0.1" value="0.3" min="0" max="5">
-                            </div>
-                            <div class="form-group">
-                                <label for="sellSpread">Satış Spreadi (%)</label>
-                                <input type="number" id="sellSpread" step="0.1" value="0.3" min="0" max="5">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <h4>⏱️ Güncelleme Aralığı</h4>
-                        <div class="form-group">
-                            <label for="refreshInterval">Yenileme Süresi (saniye)</label>
-                            <input type="range" id="refreshInterval" min="10" max="60" value="15">
-                            <span class="range-value" id="intervalValue">15s</span>
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <h4>💱 Döviz Görünürlüğü</h4>
-                        <div class="toggle-list" id="currencyToggles">
-                            <!-- Will be populated by JS -->
-                        </div>
-                    </div>
-
-                    <div class="admin-section">
-                        <h4>🥇 Altın Görünürlüğü</h4>
-                        <div class="toggle-list" id="goldToggles">
-                            <!-- Will be populated by JS -->
-                        </div>
-                    </div>
-
-                    <div class="admin-actions">
-                        <button class="btn-primary" id="saveSettings">💾 Kaydet</button>
-                        <button class="btn-secondary" id="logoutBtn">🚪 Çıkış</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Admin Panel Modal Removed (Moved to admin.html) -->
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">

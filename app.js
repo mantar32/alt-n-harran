@@ -1000,13 +1000,7 @@ const EventListeners = {
             toggleSidebar(false);
         });
 
-        document.getElementById('nav-settings')?.addEventListener('click', () => {
-            if (DOM.adminModal) {
-                DOM.adminModal.classList.add('active');
-                DOM.adminModal.style.display = 'flex';
-            }
-            toggleSidebar(false);
-        });
+        // Admin link navigates directly to admin.html now
 
         document.getElementById('nav-contact')?.addEventListener('click', () => {
             if (DOM.contactModal) {
