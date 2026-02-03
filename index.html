@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -23,88 +23,122 @@
 </head>
 
 <body>
-    <!-- Header -->
-    <header class="header" id="header">
-        <div class="header-container">
-            <div class="logo-section">
-                <div class="logo">
-                    <span class="logo-icon">◈</span>
-                    <span class="logo-text">Altın<span class="logo-accent">Harran</span></span>
-                </div>
-                <span class="market-badge" id="marketStatus">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Piyasalar Açık</span>
-                </span>
-            </div>
-            <div class="header-right">
-                <div class="last-update" id="lastUpdate">
-                    <span class="update-label">Son Güncelleme:</span>
-                    <span class="update-time">--:--:--</span>
-                </div>
-                <div class="live-clock" id="liveClock">
-                    <span class="clock-icon">🕒</span>
-                    <span class="clock-time" id="realTimeClock">--:--:--</span>
-                </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Tema Değiştir">
-                    <span class="theme-icon sun">☀️</span>
-                    <span class="theme-icon moon">🌙</span>
-                </button>
-                <button class="admin-btn" id="adminBtn">
-                    <span>⚙️</span>
-                    <span class="admin-text">Admin</span>
-                </button>
-            </div>
+    <!-- Ticker Bar - Kayan Yazı -->
+    <div class="ticker-bar" id="tickerBar">
+        <div class="ticker-content" id="tickerContent">
+            <!-- Ticker items will be inserted by JS -->
+            <span class="ticker-item">
+                <span class="ticker-label">Külçe<sub>(0.995)</sub></span>
+                <span class="ticker-value" id="ticker-kulce">--</span>
+            </span>
+            <span class="ticker-item">
+                <span class="ticker-label">22 Ayar</span>
+                <span class="ticker-value" id="ticker-22ayar">--</span>
+            </span>
+            <span class="ticker-item">
+                <span class="ticker-label">XAUUSD</span>
+                <span class="ticker-value" id="ticker-xauusd">--</span>
+            </span>
+            <span class="ticker-item">
+                <span class="ticker-label">XAG/USD</span>
+                <span class="ticker-value" id="ticker-xagusd">--</span>
+            </span>
         </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <!-- Currency Section -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span class="title-icon">💱</span>
-                    Döviz Kurları
-                </h2>
-                <div class="section-badge">Canlı</div>
-            </div>
-            <div class="cards-grid" id="currencyGrid">
-                <!-- Currency cards will be inserted by JS -->
-            </div>
-        </section>
+    <main class="main-content table-layout">
+        <div class="tables-container">
+            <!-- Left Column -->
+            <div class="tables-column">
+                <!-- Altın Table -->
+                <div class="price-table-wrapper">
+                    <table class="price-table" id="altinTable">
+                        <thead>
+                            <tr>
+                                <th class="th-name">Altın</th>
+                                <th class="th-price">Alış</th>
+                                <th class="th-price">Satış</th>
+                                <th class="th-change">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="altinTableBody">
+                            <!-- Will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
 
-        <!-- Wholesale Gold Section -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span class="title-icon">🥇</span>
-                    Toptan Altın Kurları
-                </h2>
-                <div class="section-badge wholesale">Toptan</div>
-            </div>
-            <div class="cards-grid" id="wholesaleGoldGrid">
-                <!-- Wholesale gold cards will be inserted by JS -->
-            </div>
-        </section>
+                <!-- Kilo Altın Table -->
+                <div class="price-table-wrapper">
+                    <table class="price-table" id="kiloAltinTable">
+                        <thead>
+                            <tr>
+                                <th class="th-name">Kilo Altın</th>
+                                <th class="th-price">Alış</th>
+                                <th class="th-price">Satış</th>
+                                <th class="th-change">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kiloAltinTableBody">
+                            <!-- Will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
 
-        <!-- Retail Gold Section -->
-        <section class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span class="title-icon">✨</span>
-                    Perakende Altın Kurları
-                </h2>
-                <div class="section-badge retail">Perakende</div>
+                <!-- Gümüş Table -->
+                <div class="price-table-wrapper">
+                    <table class="price-table" id="gumusTable">
+                        <thead>
+                            <tr>
+                                <th class="th-name">Gümüş</th>
+                                <th class="th-price">Alış</th>
+                                <th class="th-price">Satış</th>
+                                <th class="th-change">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gumusTableBody">
+                            <!-- Will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="cards-grid" id="retailGoldGrid">
-                <!-- Retail gold cards will be inserted by JS -->
-            </div>
-        </section>
 
-        <!-- Disclaimer -->
-        <div class="disclaimer">
-            <p>⚠️ Bu veriler yalnızca bilgilendirme amaçlıdır. Yatırım tavsiyesi değildir. İşlem yapmadan önce güncel
-                fiyatları doğrulayınız.</p>
+            <!-- Right Column -->
+            <div class="tables-column">
+                <!-- Sarrafiye Table -->
+                <div class="price-table-wrapper">
+                    <table class="price-table" id="sarrafiyeTable">
+                        <thead>
+                            <tr>
+                                <th class="th-name">Sarrafiye</th>
+                                <th class="th-price">Alış</th>
+                                <th class="th-price">Satış</th>
+                                <th class="th-change">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sarrafiyeTableBody">
+                            <!-- Will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Eski Sarrafiye Table -->
+                <div class="price-table-wrapper">
+                    <table class="price-table" id="eskiSarrafiyeTable">
+                        <thead>
+                            <tr>
+                                <th class="th-name">Eski Sarrafiye</th>
+                                <th class="th-price">Alış</th>
+                                <th class="th-price">Satış</th>
+                                <th class="th-change">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eskiSarrafiyeTableBody">
+                            <!-- Will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </main>
 

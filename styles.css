@@ -1231,3 +1231,250 @@ body {
     min-width: 65px;
     text-align: center;
 }
+
+/* =========================================
+   TICKER BAR - KAYAN YAZI ÇUBUĞU
+   ========================================= */
+
+.ticker-bar {
+    width: 100%;
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 8px 0;
+}
+
+.ticker-content {
+    display: inline-flex;
+    gap: 60px;
+    animation: ticker-scroll 30s linear infinite;
+    padding-left: 100%;
+}
+
+.ticker-content:hover {
+    animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.ticker-label {
+    color: #888;
+    font-weight: 500;
+}
+
+.ticker-label sub {
+    font-size: 0.7em;
+    color: #666;
+}
+
+.ticker-value {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+}
+
+.ticker-value.up {
+    color: var(--success);
+}
+
+.ticker-value.down {
+    color: var(--danger);
+}
+
+.ticker-change {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.ticker-change.up {
+    color: var(--success);
+    background: var(--success-bg);
+}
+
+.ticker-change.down {
+    color: var(--danger);
+    background: var(--danger-bg);
+}
+
+/* =========================================
+   TABLE LAYOUT - TABLO GÖRÜNÜMÜ
+   ========================================= */
+
+.main-content.table-layout {
+    max-width: 1600px;
+    padding: 16px;
+    background: #111;
+}
+
+.tables-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.tables-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.price-table-wrapper {
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.price-table thead {
+    background: #222;
+}
+
+.price-table th {
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #888;
+    border-bottom: 1px solid #333;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.price-table th.th-name {
+    width: 40%;
+}
+
+.price-table th.th-price {
+    width: 22%;
+    text-align: right;
+}
+
+.price-table th.th-change {
+    width: 16%;
+    text-align: right;
+}
+
+.price-table tbody tr {
+    border-bottom: 1px solid #2a2a2a;
+    transition: background 0.15s ease;
+}
+
+.price-table tbody tr:hover {
+    background: #252525;
+}
+
+.price-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.price-table td {
+    padding: 12px 16px;
+    color: #ccc;
+}
+
+.price-table td.td-name {
+    font-weight: 500;
+    color: #fff;
+}
+
+.price-table td.td-name .item-code {
+    font-size: 0.75rem;
+    color: #666;
+    margin-left: 8px;
+}
+
+.price-table td.td-price {
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+}
+
+.price-table td.td-price.price-up {
+    color: var(--success);
+}
+
+.price-table td.td-price.price-down {
+    color: var(--danger);
+}
+
+.price-table td.td-change {
+    text-align: right;
+}
+
+.change-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.change-indicator.up {
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.change-indicator.down {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.change-indicator.neutral {
+    color: #888;
+    background: rgba(136, 136, 136, 0.1);
+}
+
+/* Responsive for tables */
+@media (max-width: 1200px) {
+    .tables-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .price-table {
+        font-size: 0.8rem;
+    }
+    
+    .price-table th,
+    .price-table td {
+        padding: 8px 10px;
+    }
+    
+    .price-table th.th-name {
+        width: 35%;
+    }
+    
+    .ticker-content {
+        gap: 40px;
+    }
+    
+    .ticker-item {
+        font-size: 0.8rem;
+    }
+}
