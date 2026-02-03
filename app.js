@@ -401,9 +401,9 @@ const UI = {
         const minuteDeg = ((minutes / 60) * 360) + ((seconds / 60) * 6);
         const hourDeg = ((hours / 12) * 360) + ((minutes / 60) * 30);
 
-        if (DOM.clockSecond) DOM.clockSecond.style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
-        if (DOM.clockMinute) DOM.clockMinute.style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
-        if (DOM.clockHour) DOM.clockHour.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        if (DOM.clockSecond) DOM.clockSecond.style.transform = `rotate(${secondDeg}deg)`;
+        if (DOM.clockMinute) DOM.clockMinute.style.transform = `rotate(${minuteDeg}deg)`;
+        if (DOM.clockHour) DOM.clockHour.style.transform = `rotate(${hourDeg}deg)`;
 
         if (DOM.marketStatus) {
             // Simple logic: Market open 09:00 - 18:00 weekdays

@@ -1852,62 +1852,41 @@ body {
 }
 
 /* Analog Clock */
+/* Analog Clock */
 .analog-clock {
-    width: 40px;
-    height: 40px;
-    border: 2px solid var(--text-primary);
-    border-radius: 50%;
+    width: 50px;
+    height: 50px;
     position: relative;
     margin-right: 15px;
-    background: var(--bg-secondary);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    /* Removed border and background as images provide them */
 }
 
-.clock-center {
-    width: 4px;
-    height: 4px;
-    background: var(--accent-gold);
-    border-radius: 50%;
+/* Common style for all clock layers (images) */
+.clock-layer {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Let clicks pass through */
+    will-change: transform;
 }
 
-.hand {
-    position: absolute;
-    bottom: 50%;
-    left: 50%;
-    transform-origin: bottom center;
-    background: var(--text-primary);
-    border-radius: 4px;
-    transform: translateX(-50%);
-    transition: transform 0.1s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+/* Specific hand styles can remain empty if not needed,
+   but keeping classes for JS selection is good. */
+.hour-hand,
+.minute-hand,
+.second-hand,
+.clock-bg {
+    /* Resetting any previous hand styles if conflicts exist */
+    background: transparent;
+    border-radius: 0;
+    transform: none;
+    /* JS will handle this */
 }
 
-.hour-hand {
-    width: 2px;
-    height: 10px;
-    background: var(--text-primary);
-    z-index: 5;
-}
-
-.minute-hand {
-    width: 2px;
-    height: 14px;
-    background: var(--text-secondary);
-    z-index: 6;
-}
-
-.second-hand {
-    width: 1px;
-    height: 17px;
-    background: var(--danger);
-    z-index: 7;
-    transition: transform 0.1s linear;
-    /* Smooth second hand */
-}
+/* Smooth second hand */
 
 @media (max-width: 768px) {
     .analog-clock {
