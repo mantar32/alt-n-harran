@@ -247,39 +247,51 @@ const Utils = {
 const API = {
     endpoints: {
         currency: 'https://static.altinkaynak.com/public/Currency',
-        gold: 'https://static.altinkaynak.com/public/Gold'
+        gold: 'https://static.altinkaynak.com/public/Gold',
+        secondary: 'https://finans.truncgil.com/today.json'
     },
 
     async fetchAllData() {
         try {
             const currencyUrl = '/api/proxy?type=currency';
             const goldUrl = '/api/proxy?type=gold';
+            // Use direct fetch for Truncgil if possible, or proxy if configured. 
+            // Since we are client-side, we try direct.
+            const secondaryUrl = this.endpoints.secondary;
 
             console.log('🔄 Fetching data...');
             const ts = new Date().getTime();
 
-            const [currencyRes, goldRes] = await Promise.all([
-                fetch(`${currencyUrl}&_=${ts}`),
-                fetch(`${goldUrl}&_=${ts}`)
+            const [currencyRes, goldRes, secondaryRes] = await Promise.all([
+                fetch(`${currencyUrl}&_=${ts}`).catch(() => null),
+                fetch(`${goldUrl}&_=${ts}`).catch(() => null),
+                fetch(`${secondaryUrl}?_=${ts}`).catch(() => null)
             ]);
 
-            if (!currencyRes.ok || !goldRes.ok) {
-                throw new Error('Proxy failed');
+            const result = { success: false, data: {}, timestamp: new Date().toISOString() };
+
+            if (currencyRes && currencyRes.ok && goldRes && goldRes.ok) {
+                result.data.currency = await currencyRes.json();
+                result.data.gold = await goldRes.json();
+                result.success = true;
             }
 
-            const currencyData = await currencyRes.json();
-            const goldData = await goldRes.json();
-
-            if (!Array.isArray(currencyData) || !Array.isArray(goldData)) {
-                throw new Error('Invalid data format');
+            // Get Secondary Data (Truncgil)
+            let secondaryData = {};
+            if (secondaryRes && secondaryRes.ok) {
+                secondaryData = await secondaryRes.json();
             }
 
-            console.log('✅ Data fetched successfully');
+            if (!result.success) {
+                throw new Error('Primary API failed');
+            }
 
+            // Attach secondary data to result to be passed to parser
             return {
                 success: true,
-                data: { currency: currencyData, gold: goldData },
-                timestamp: new Date().toISOString()
+                data: { currency: result.data.currency, gold: result.data.gold },
+                secondaryData: secondaryData,
+                timestamp: result.timestamp
             };
         } catch (error) {
             console.warn('⚠️ Proxy failed, trying fallback...', error);
@@ -316,14 +328,23 @@ const API = {
     parseTurkishNumber(val) {
         if (typeof val === 'number') return val;
         if (typeof val === 'string') {
-            return parseFloat(val.replace(/\./g, '').replace(',', '.'));
+            return parseFloat(val.replace(/\./g, '').replace(',', '.').replace('%', ''));
         }
         return 0;
     },
 
-    parseAllData(currencyData, goldData) {
+    parseAllData(currencyData, goldData, secondaryData = {}) {
         const allItems = [...(Array.isArray(currencyData) ? currencyData : []), ...(Array.isArray(goldData) ? goldData : [])];
         const rates = {};
+
+        // Mapping: Truncgil Key -> App Key
+        const map = {
+            'gram-altin': 'GA', 'ceyrek-altin': 'C', 'yarim-altin': 'Y', 'tam-altin': 'A',
+            'cumhuriyet-altini': 'A', 'ata-altin': 'A_T', '22-ayar-bilezik': 'B',
+            '14-ayar-altin': '14', '18-ayar-altin': '18', 'ons': 'XAUUSD', 'gumus': 'AG_T',
+            'USD': 'USD', 'EUR': 'EUR', 'GBP': 'GBP', 'CHF': 'CHF'
+        };
+        const revMap = Object.entries(map).reduce((acc, [k, v]) => ({ ...acc, [v]: k }), {});
 
         allItems.forEach(item => {
             if (item && item.Kod) {
