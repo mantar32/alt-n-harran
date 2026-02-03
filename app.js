@@ -575,9 +575,62 @@ const UI = {
 // ============================================
 
 const DataManager = {
+    dayStartRates: null,
+
+    init() {
+        this.loadDayStartRates();
+        this.checkDayReset();
+    },
+
+    loadDayStartRates() {
+        const stored = localStorage.getItem('dayStartRates');
+        if (stored) {
+            const data = JSON.parse(stored);
+            const today = new Date().toLocaleDateString('tr-TR');
+            if (data.date === today) {
+                this.dayStartRates = data.rates;
+            } else {
+                this.dayStartRates = null; // Stored data is old
+                localStorage.removeItem('dayStartRates');
+            }
+        }
+    },
+
+    saveDayStartRates(rates) {
+        if (this.dayStartRates) return; // Already saved for today
+
+        const today = new Date().toLocaleDateString('tr-TR');
+        const startRates = {};
+
+        // Save current sell prices as start rates
+        Object.keys(rates).forEach(key => {
+            startRates[key] = rates[key].sell;
+        });
+
+        this.dayStartRates = startRates;
+        localStorage.setItem('dayStartRates', JSON.stringify({
+            date: today,
+            rates: startRates
+        }));
+    },
+
+    checkDayReset() {
+        const today = new Date().toLocaleDateString('tr-TR');
+        const stored = localStorage.getItem('dayStartRates');
+        if (stored) {
+            const data = JSON.parse(stored);
+            if (data.date !== today) {
+                this.dayStartRates = null;
+                localStorage.removeItem('dayStartRates');
+            }
+        }
+    },
+
     async fetchAllData() {
+        this.checkDayReset();
+
         try {
-            // Store previous rates for comparison
+            // Store previous rates for comparison (short term)
             if (Object.keys(state.rates).length > 0) {
                 state.previousRates = JSON.parse(JSON.stringify(state.rates));
             }
@@ -592,6 +645,24 @@ const DataManager = {
 
             // Parse all data into rates object
             const newRates = API.parseAllData(result.data.currency, result.data.gold);
+
+            // Initialize Day Start Rates if not exists
+            if (!this.dayStartRates) {
+                this.saveDayStartRates(newRates);
+            }
+
+            // Calculate Change (Priority: API Change > Calculated Daily Change)
+            Object.keys(newRates).forEach(code => {
+                const item = newRates[code];
+
+                // If API Change is 0, try to calculate vs Day Start
+                if (item.change === 0 && this.dayStartRates && this.dayStartRates[code]) {
+                    const startPrice = this.dayStartRates[code];
+                    if (startPrice > 0) {
+                        item.change = ((item.sell - startPrice) / startPrice) * 100;
+                    }
+                }
+            });
 
             state.rates = newRates;
             state.lastUpdate = result.timestamp;
@@ -1032,6 +1103,9 @@ async function init() {
 
     // Init Theme
     UI.initTheme();
+
+    // Init Data Manager (Load stored rates)
+    DataManager.init();
 
     // Fetch fresh data from API
     await DataManager.fetchAllData();
