@@ -224,6 +224,23 @@ body {
     gap: 16px;
 }
 
+.header-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-icon-btn:hover {
+    background-color: var(--bg-tertiary);
+}
+
 .last-update {
     display: flex;
     flex-direction: column;
@@ -1508,10 +1525,6 @@ body {
 .alarm-fab:hover {
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(212, 165, 32, 0.5);
-}
-
-.alarm-fab.has-alarms {
-    animation: pulse-alarm 2s infinite;
 }
 
 @keyframes pulse-alarm {
