@@ -32,16 +32,16 @@ const CONFIG = {
 
     // Altın (Gold) items for table
     altin: [
-        { code: 'HAS_ALTIN', name: 'Has Altın', apiCode: 'HA', subCode: '(0.9999)' },
-        { code: 'KULCE', name: 'Külçe', apiCode: 'K0995', subCode: '(0.995)' },
+        { code: 'HAS_ALTIN', name: 'Has Altın', apiCode: 'HH_T', subCode: '(0.9999)' },
+        { code: 'KULCE', name: 'Külçe', apiCode: 'CH_T', subCode: '(0.995)' },
         { code: 'GRAM', name: 'Gram', apiCode: 'GA', subCode: '(24 Ayar)' },
-        { code: '22_AYAR_GRAM', name: '22 Ayar Gram', apiCode: '22A' },
-        { code: '22_AYAR_HURDA', name: '22 Ayar Hurda', apiCode: '22AH' },
-        { code: '18_AYAR', name: '18 Ayar', apiCode: '18A' },
-        { code: '14_AYAR', name: '14 Ayar', apiCode: '14A' },
+        { code: '22_AYAR_GRAM', name: '22 Ayar Gram', apiCode: 'B' },
+        { code: '22_AYAR_HURDA', name: '22 Ayar Hurda', apiCode: 'B_T' },
+        { code: '18_AYAR', name: '18 Ayar', apiCode: '18' },
+        { code: '14_AYAR', name: '14 Ayar', apiCode: '14' },
     ],
 
-    // Kilo Altın items
+    // Kilo Altın items - Using calculated values from gram
     kiloAltin: [
         { code: 'USDKG', name: 'USD/KG', apiCode: 'USDKG', subCode: '(0.995)' },
         { code: 'EURKG', name: 'EUR/KG', apiCode: 'EURKG', subCode: '(0.995)' },
@@ -50,8 +50,8 @@ const CONFIG = {
 
     // Gümüş items
     gumus: [
-        { code: 'GRANUL_GUMUS', name: 'Granül Gümüş', apiCode: 'GG' },
-        { code: 'KULCE_50_GR', name: 'Külçe (50 GR)', apiCode: 'G50' },
+        { code: 'GRANUL_GUMUS', name: 'Granül Gümüş', apiCode: 'AG_T' },
+        { code: 'KULCE_50_GR', name: 'Külçe (50 GR)', apiCode: 'AG_T' },
     ],
 
     // Sarrafiye items
@@ -59,7 +59,7 @@ const CONFIG = {
         { code: 'CEYREK', name: 'Çeyrek', apiCode: 'C' },
         { code: 'YARIM', name: 'Yarım', apiCode: 'Y' },
         { code: 'TEKLIK', name: 'Teklik', apiCode: 'T' },
-        { code: 'GREMSE', name: 'Gremse', apiCode: 'G5' },
+        { code: 'GREMSE', name: 'Gremse', apiCode: 'G' },
         { code: 'GREMSE_BESLI', name: 'Gremse Beşli', apiCode: 'G5B' },
         { code: 'ATA_CUMHURIYET', name: 'Ata Cumhuriyet', apiCode: 'A' },
         { code: 'ATA_BESLI', name: 'Ata Beşli', apiCode: 'A5' },
@@ -339,21 +339,21 @@ const UI = {
             DOM.tickerEur.className = `ticker-value ${dir}`;
         }
 
-        // Külçe (0.995)
-        if (DOM.tickerKulce && rates['K0995']) {
-            const buy = Utils.formatPrice(rates['K0995'].buy);
-            const sell = Utils.formatPrice(rates['K0995'].sell);
-            const change = rates['K0995'].change || 0;
+        // Külçe (0.995) - API code: CH_T
+        if (DOM.tickerKulce && rates['CH_T']) {
+            const buy = Utils.formatPrice(rates['CH_T'].buy);
+            const sell = Utils.formatPrice(rates['CH_T'].sell);
+            const change = rates['CH_T'].change || 0;
             const dir = change >= 0 ? 'up' : 'down';
             DOM.tickerKulce.innerHTML = `${buy} / ${sell} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.tickerKulce.className = `ticker-value ${dir}`;
         }
 
-        // 22 Ayar
-        if (DOM.ticker22Ayar && rates['22A']) {
-            const buy = Utils.formatPrice(rates['22A'].buy);
-            const sell = Utils.formatPrice(rates['22A'].sell);
-            const change = rates['22A'].change || 0;
+        // 22 Ayar - API code: B
+        if (DOM.ticker22Ayar && rates['B']) {
+            const buy = Utils.formatPrice(rates['B'].buy);
+            const sell = Utils.formatPrice(rates['B'].sell);
+            const change = rates['B'].change || 0;
             const dir = change >= 0 ? 'up' : 'down';
             DOM.ticker22Ayar.innerHTML = `${buy} / ${sell} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.ticker22Ayar.className = `ticker-value ${dir}`;
