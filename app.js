@@ -140,6 +140,11 @@ const DOM = {
     modalClose: document.getElementById('modalClose'),
     detailChartCanvas: document.getElementById('detailChart'),
 
+    // Header Elements
+    marketStatus: document.getElementById('marketStatus'),
+    lastUpdate: document.getElementById('lastUpdate'),
+    themeToggle: document.getElementById('themeToggle'),
+
     adminModal: document.getElementById('adminModal'),
     adminModalClose: document.getElementById('adminModalClose'),
     adminLogin: document.getElementById('adminLogin'),
@@ -333,6 +338,47 @@ const API = {
 // ============================================
 
 const UI = {
+    // Update header info (Time & Market Status)
+    updateHeader() {
+        if (DOM.lastUpdate) {
+            const now = new Date();
+            DOM.lastUpdate.textContent = now.toLocaleTimeString('tr-TR');
+        }
+
+        if (DOM.marketStatus) {
+            // Simple logic: Market open 09:00 - 18:00 weekdays
+            const now = new Date();
+            const hour = now.getHours();
+            const day = now.getDay();
+            const isOpen = day !== 0 && day !== 6 && hour >= 9 && hour < 18;
+
+            const dot = DOM.marketStatus.querySelector('.status-dot');
+            const text = DOM.marketStatus.querySelector('.status-text');
+
+            if (isOpen) {
+                DOM.marketStatus.classList.remove('closed');
+                if (text) text.textContent = 'Piyasa Açık';
+            } else {
+                DOM.marketStatus.classList.add('closed');
+                if (text) text.textContent = 'Piyasa Kapalı';
+            }
+        }
+    },
+
+    toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    },
+
+    initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    },
+
     showLoading() {
         if (DOM.loadingOverlay) {
             DOM.loadingOverlay.classList.remove('hidden');
@@ -571,6 +617,7 @@ const DataManager = {
     updateUI() {
         UI.updateTicker();
         UI.renderAllTables();
+        UI.updateHeader(); // Update clock and market status
 
         // Check alarms
         if (typeof AlarmManager !== 'undefined') {
@@ -738,6 +785,10 @@ const Converter = {
 
 const EventListeners = {
     init() {
+        if (DOM.themeToggle) {
+            DOM.themeToggle.addEventListener('click', () => UI.toggleTheme());
+        }
+
         // Modal close buttons
         if (DOM.modalClose) {
             DOM.modalClose.addEventListener('click', () => UI.closeModal(DOM.chartModal));
@@ -940,6 +991,9 @@ async function init() {
 
     // Setup event listeners
     EventListeners.init();
+
+    // Init Theme
+    UI.initTheme();
 
     // Fetch fresh data from API
     await DataManager.fetchAllData();
