@@ -303,25 +303,7 @@ body {
     transform: translateY(0) rotate(0);
 }
 
-.admin-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
-    border: none;
-    border-radius: var(--border-radius-sm);
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-base);
-}
 
-.admin-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(212, 165, 32, 0.4);
-}
 
 /* Main Content */
 .main-content {
