@@ -824,7 +824,7 @@ const AlarmManager = {
             const rate = state.rates[alarm.itemCode];
             if (!rate) return;
 
-            const currentPrice = rate.sell || rate.buy;
+            const currentPrice = rate.buy; // Alış fiyatına bak
             let triggered = false;
 
             if (alarm.type === 'below' && currentPrice <= alarm.targetPrice) {
