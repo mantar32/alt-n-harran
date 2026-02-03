@@ -327,10 +327,22 @@ const API = {
 
         allItems.forEach(item => {
             if (item && item.Kod) {
+                const sellPrice = this.parseTurkishNumber(item.Satis);
+                const buyPrice = this.parseTurkishNumber(item.Alis);
+
+                // Try to find previous close for daily change
+                let prevClose = this.parseTurkishNumber(item.DunkuKapanis || item.DKapanis || item.Acilis); // Common fields
+                let change = this.parseTurkishNumber(item.Degisim);
+
+                // If API doesn't provide change but has prevClose, calculate manually
+                if ((!change || change === 0) && prevClose > 0) {
+                    change = ((sellPrice - prevClose) / prevClose) * 100;
+                }
+
                 rates[item.Kod] = {
-                    buy: this.parseTurkishNumber(item.Alis),
-                    sell: this.parseTurkishNumber(item.Satis),
-                    change: this.parseTurkishNumber(item.Degisim) || 0,
+                    buy: buyPrice,
+                    sell: sellPrice,
+                    change: change || 0,
                     name: item.Isim || item.Kod
                 };
             }
