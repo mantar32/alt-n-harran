@@ -352,8 +352,19 @@ const API = {
                 const buyPrice = this.parseTurkishNumber(item.Alis);
 
                 // Try to find previous close for daily change
-                let prevClose = this.parseTurkishNumber(item.DunkuKapanis || item.DKapanis || item.Acilis); // Common fields
+                // 1. Primary Change
                 let change = this.parseTurkishNumber(item.Degisim);
+
+                // 2. Secondary Change (Truncgil)
+                if ((!change || change === 0) && secondaryData) {
+                    const secKey = revMap[item.Kod] || item.Kod;
+                    if (secondaryData[secKey] && secondaryData[secKey].Değişim) {
+                        change = this.parseTurkishNumber(secondaryData[secKey].Değişim);
+                    }
+                }
+
+                // 3. Manual Fallback
+                let prevClose = this.parseTurkishNumber(item.DunkuKapanis || item.DKapanis || item.Acilis);
 
                 // If API doesn't provide change but has prevClose, calculate manually
                 if ((!change || change === 0) && prevClose > 0) {
