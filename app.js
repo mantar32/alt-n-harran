@@ -328,12 +328,21 @@ const UI = {
     // Update ticker bar with live values
     updateTicker() {
         const rates = state.rates;
+        const prev = state.previousRates || {};
+
+        // Helper function to calculate change
+        const calcChange = (code) => {
+            if (rates[code] && prev[code] && prev[code].buy > 0) {
+                return ((rates[code].buy - prev[code].buy) / prev[code].buy) * 100;
+            }
+            return rates[code]?.change || 0;
+        };
 
         // EUR
         if (DOM.tickerEur && rates['EUR']) {
             const buy = Utils.formatPrice(rates['EUR'].buy);
             const sell = Utils.formatPrice(rates['EUR'].sell);
-            const change = rates['EUR'].change || 0;
+            const change = calcChange('EUR');
             const dir = change >= 0 ? 'up' : 'down';
             DOM.tickerEur.innerHTML = `${buy} / ${sell} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.tickerEur.className = `ticker-value ${dir}`;
@@ -343,7 +352,7 @@ const UI = {
         if (DOM.tickerKulce && rates['CH_T']) {
             const buy = Utils.formatPrice(rates['CH_T'].buy);
             const sell = Utils.formatPrice(rates['CH_T'].sell);
-            const change = rates['CH_T'].change || 0;
+            const change = calcChange('CH_T');
             const dir = change >= 0 ? 'up' : 'down';
             DOM.tickerKulce.innerHTML = `${buy} / ${sell} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.tickerKulce.className = `ticker-value ${dir}`;
@@ -353,7 +362,7 @@ const UI = {
         if (DOM.ticker22Ayar && rates['B']) {
             const buy = Utils.formatPrice(rates['B'].buy);
             const sell = Utils.formatPrice(rates['B'].sell);
-            const change = rates['B'].change || 0;
+            const change = calcChange('B');
             const dir = change >= 0 ? 'up' : 'down';
             DOM.ticker22Ayar.innerHTML = `${buy} / ${sell} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.ticker22Ayar.className = `ticker-value ${dir}`;
@@ -362,7 +371,7 @@ const UI = {
         // XAUUSD
         if (DOM.tickerXauusd && rates['XAUUSD']) {
             const buy = Utils.formatPrice(rates['XAUUSD'].buy);
-            const change = rates['XAUUSD'].change || 0;
+            const change = calcChange('XAUUSD');
             const dir = change >= 0 ? 'up' : 'down';
             DOM.tickerXauusd.innerHTML = `${buy} <span class="ticker-change ${dir}">${change >= 0 ? '↑' : '↓'}${Math.abs(change).toFixed(2)}%</span>`;
             DOM.tickerXauusd.className = `ticker-value ${dir}`;
