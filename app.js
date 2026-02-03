@@ -143,6 +143,7 @@ const DOM = {
     // Header Elements
     marketStatus: document.getElementById('marketStatus'),
     lastUpdate: document.getElementById('lastUpdate'),
+    liveClock: document.getElementById('liveClock'),
     themeToggle: document.getElementById('themeToggle'),
 
     adminModal: document.getElementById('adminModal'),
@@ -340,9 +341,10 @@ const API = {
 const UI = {
     // Update header info (Time & Market Status)
     updateHeader() {
-        if (DOM.lastUpdate) {
+        // Live Clock
+        if (DOM.liveClock) {
             const now = new Date();
-            DOM.lastUpdate.textContent = now.toLocaleTimeString('tr-TR');
+            DOM.liveClock.textContent = now.toLocaleTimeString('tr-TR');
         }
 
         if (DOM.marketStatus) {
@@ -362,6 +364,15 @@ const UI = {
                 DOM.marketStatus.classList.add('closed');
                 if (text) text.textContent = 'Piyasa Kapalı';
             }
+        }
+    },
+
+    updateLastUpdate() {
+        if (DOM.lastUpdate && state.lastUpdate) {
+            const date = new Date(state.lastUpdate);
+            DOM.lastUpdate.textContent = date.toLocaleTimeString('tr-TR');
+        } else if (DOM.lastUpdate) {
+            DOM.lastUpdate.textContent = '--:--:--';
         }
     },
 
@@ -618,6 +629,7 @@ const DataManager = {
         UI.updateTicker();
         UI.renderAllTables();
         UI.updateHeader(); // Update clock and market status
+        UI.updateLastUpdate(); // Update data timestamp
 
         // Check alarms
         if (typeof AlarmManager !== 'undefined') {
